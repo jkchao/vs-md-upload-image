@@ -1,0 +1,165 @@
+{
+  "defaultSeverity": "error",
+  "extends": ["tslint:recommended"],
+  "linterOptions": {
+    "exclude": ["node_modules/**"]
+  },
+  "jsRules": {},
+  "rules": {
+    "no-console": false,
+
+    "no-empty": true,
+
+    "quotemark": false,
+
+    "one-variable-per-declaration": false,
+
+    "semicolon": [true, "always"],
+
+    "prefer-const": true,
+
+    "member-access": true,
+
+    "member-ordering": [
+      true,
+      {
+        "order": [
+          "private-static-field",
+          "private-static-method",
+          "protected-static-field",
+          "protected-static-method",
+          "public-static-field",
+          "public-static-method",
+          "private-instance-field",
+          "protected-instance-field",
+          "public-instance-field",
+          "private-constructor",
+          "protected-constructor",
+          "public-constructor",
+          "private-instance-method",
+          "protected-instance-method",
+          "public-instance-method"
+        ]
+      }
+    ],
+
+    "no-empty-interface": false,
+
+    "no-parameter-reassignment": false,
+
+    "prefer-for-of": false,
+
+    "await-promise": true,
+
+    "curly": [true, "ignore-same-line"],
+
+    "forin": true,
+
+    "no-arg": true,
+
+    "no-bitwise": true,
+
+    "no-conditional-assignment": true,
+
+    "no-eval": true,
+
+    "no-var-keyword": true,
+
+    "no-debugger": true,
+
+    "no-duplicate-super": true,
+
+    "no-invalid-template-strings": true,
+
+    "no-sparse-arrays": true,
+
+    "no-string-throw": true,
+
+    "no-unsafe-finally": true,
+
+    "no-unused-expression": false,
+
+    "no-use-before-declare": true,
+
+    "radix": true,
+
+    "restrict-plus-operands": true,
+
+    "triple-equals": true,
+
+    "use-isnan": true,
+
+    "indent": [true, "spaces", 2],
+
+    "no-duplicate-imports": true,
+
+    "array-type": [true, "array"],
+
+    "class-name": true,
+
+    "comment-format": [true, "check-space"],
+
+    "import-spacing": true,
+
+    "interface-name": false,
+
+    "jsdoc-format": true,
+
+    "new-parens": true,
+    "no-consecutive-blank-lines": [true, 2],
+
+    "whitespace": [
+      false,
+      "check-branch",
+      // "check-decl",
+      "check-module",
+      "check-separator",
+      "check-rest-spread",
+      "check-type",
+      "check-type-operator"
+    ],
+
+    "no-trailing-whitespace": true,
+
+    "no-unnecessary-initializer": true,
+
+    "variable-name": [
+      true,
+      "check-format",
+      "allow-leading-underscore",
+      "allow-trailing-underscore",
+      "allow-pascal-case",
+      "ban-keywords"
+    ],
+    "trailing-comma": [
+      true,
+      {
+        "multiline": "never",
+        "singleline": "never"
+      }
+    ],
+
+    "max-classes-per-file": false,
+    "no-switch-case-fall-through": true,
+
+    "no-angle-bracket-type-assertion": false,
+
+    "one-line": [false],
+
+    "no-object-literal-type-assertion": false,
+
+    "space-before-function-paren": false,
+
+    "no-submodule-imports": false,
+    "no-shadowed-variable": false,
+    "ordered-imports": false,
+
+    "object-literal-key-quotes": false,
+
+    "object-literal-sort-keys": false,
+    "arrow-parens": [true, "ban-single-arg-parens"],
+    "align": false,
+    "no-namespace": false
+  },
+  "rulesDirectory": []
+}
