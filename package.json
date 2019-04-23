@@ -17,11 +17,36 @@
     "markdown.markdownItPlugins": true,
     "commands": [
       {
-        "command": "extension.select.file",
+        "command": "QN.select.file",
         "title": "Upload image: select file to upload",
         "when": "editorTextFocus && editorLangId == 'markdown'"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "qiniu config",
+      "properties": {
+        "qiniu.ak": {
+          "type": "string",
+          "description": "七牛 AK"
+        },
+        "qiniu.sk": {
+          "type": "string",
+          "description": "七牛 SK"
+        },
+        "qiniu.bucket": {
+          "type": "string",
+          "description": "七牛 bucket"
+        },
+        "qiniu.prefix": {
+          "type": "string",
+          "description": "上传文件时的路径前缀"
+        },
+        "qiniu.domain": {
+          "type": "string",
+          "description": "上传成功后的图片 url 的 domain"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "yarn run compile",
