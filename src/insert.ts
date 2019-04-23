@@ -12,6 +12,6 @@ export async function insertToMd(path: string) {
       text.insert(editor!.selection.active, img);
     });
   } catch (error) {
-    window.showErrorMessage(error);
+    // showMessage(MessageType.ERROR, error.error || error);
   }
 }

@@ -74,6 +74,7 @@
   },
   "dependencies": {
     "markdown-it-emoji": "^1.4.0",
-    "qiniu": "^7.2.1"
+    "qiniu": "^7.2.1",
+    "tinify": "^1.6.0-beta.2"
   }
 }
