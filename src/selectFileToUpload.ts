@@ -1,6 +1,7 @@
 import { hasConfig, checkCurrentFile } from './utils';
-import { window } from 'vscode';
+import { window, ViewColumn } from 'vscode';
 import { insertToMd } from './insert';
+import { createWebviewContent } from './webviewContent';
 
 export function selectFileToUpload() {
   if (!hasConfig() || !checkCurrentFile()) {
@@ -14,6 +15,10 @@ export function selectFileToUpload() {
     .then(file => {
       if (!file) return;
       const { path } = file[0];
-      return insertToMd(path);
+
+      const paner = window.createWebviewPanel('image Corp', 'Image Corp', ViewColumn.One);
+
+      paner.webview.html = createWebviewContent(path);
+      // return insertToMd(path);
     });
 }

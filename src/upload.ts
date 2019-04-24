@@ -22,9 +22,6 @@ export async function uploadFileToQN(filePath: string) {
   const key = !!prefix ? `${prefix}/${fileName}` : `${fileName}`;
   const extra = new qiniu.form_up.PutExtra();
 
-  const statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
-
-  statusBarItem.show();
   return new Promise<Response>((resolve, reject) => {
     formUploader.putFile(token, key, filePath, extra, (err, body, info) => {
       if (err) {

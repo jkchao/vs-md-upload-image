@@ -1,4 +1,4 @@
-import { window } from 'vscode';
+import { window, MessageOptions } from 'vscode';
 
 export enum MessageType {
   INFO = 'info',
@@ -6,18 +6,18 @@ export enum MessageType {
   WARNING = 'warning'
 }
 
-export function showMessage(type: MessageType, message: string) {
+export function showMessage(type: MessageType, message: string, options: MessageOptions = {}) {
   switch (type) {
     case MessageType.INFO:
-      window.showInformationMessage(message);
+      window.showInformationMessage(message, options);
       break;
 
     case MessageType.WARNING:
-      window.showWarningMessage(message);
+      window.showWarningMessage(message, options);
       break;
 
     case MessageType.ERROR:
-      window.showErrorMessage(message);
+      window.showErrorMessage(message, options);
       break;
 
     default:
