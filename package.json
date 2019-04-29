@@ -49,12 +49,16 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "yarn run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "yarn run build",
+    "watch": "tsc -watch -p tsconfig.extension.json",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "yarn run compile && node ./node_modules/vscode/bin/test",
-    "precommit": "lint-staged"
+    "test": "yarn run build && node ./node_modules/vscode/bin/test",
+    "precommit": "lint-staged",
+    "start": "react-scripts start",
+    "build": "yarn run build:react && yarn run build:extension",
+    "build:react": "react-scripts build",
+    "build:extension": "tsc -p tsconfig.extension.json",
+    "eject": "react-scripts eject"
   },
   "lint-staged": {
     "*.{js,json,ts,css,md}": [
@@ -63,6 +67,8 @@
     ]
   },
   "devDependencies": {
+    "@types/react": "16.8.14",
+    "@types/react-dom": "16.8.4",
     "@types/mocha": "^2.2.42",
     "@types/node": "^10.12.21",
     "husky": "^1.3.1",
@@ -73,8 +79,23 @@
     "vscode": "^1.1.28"
   },
   "dependencies": {
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-scripts": "3.0.0",
     "markdown-it-emoji": "^1.4.0",
     "qiniu": "^7.2.1",
     "tinify": "^1.6.0-beta.2"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
