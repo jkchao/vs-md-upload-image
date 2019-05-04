@@ -14,11 +14,11 @@
 
     "one-variable-per-declaration": false,
 
+    "member-access": false,
+
     "semicolon": [true, "always"],
 
     "prefer-const": true,
-
-    "member-access": true,
 
     "member-ordering": [
       true,

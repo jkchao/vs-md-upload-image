@@ -1,12 +1,11 @@
 import React from 'react';
-import './App.css';
+import { Crop } from './component/Crop';
+import './App.scss';
 
 const App: React.FC = () => {
   return (
     <div className="App">
-      <div className="container">
-        <img src="https://static.jkchao.cn/TypeScript.png"/>
-      </div>
+      <Crop></Crop>
     </div>
   );
 };
