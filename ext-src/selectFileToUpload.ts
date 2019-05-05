@@ -1,14 +1,18 @@
 import { hasConfig, checkCurrentFile } from './utils';
-import { window, ViewColumn, Uri } from 'vscode';
+import { window, ViewColumn, Uri, ExtensionContext } from 'vscode';
 import { insertToMd } from './insert';
 import { WebViewContent } from './webviewContent';
 import { writeFileSync, readFileSync, mkdirSync, existsSync } from 'fs';
 import { join, basename } from 'path';
 
-export function selectFileToUpload(rootPath: string) {
+export function selectFileToUpload(context: ExtensionContext) {
   if (!hasConfig() || !checkCurrentFile()) {
     return false;
   }
+
+  const currentFileUri = window.activeTextEditor.document.uri;
+
+  const rootPath = context.extensionPath;
 
   window
     .showOpenDialog({
@@ -24,12 +28,20 @@ export function selectFileToUpload(rootPath: string) {
         mkdirSync(imagePath);
       }
 
-      const outPut = `${rootPath}${basename(filePath)}`;
+      const outPut = `${rootPath}/${basename(filePath)}`;
 
+      // 写文件到项目，如果不在此项目下，无权利访问
       writeFileSync(`${outPut}`, readFileSync(filePath));
 
       const paner = window.createWebviewPanel('image Corp', 'Image Corp', ViewColumn.One, {
-        enableScripts: true
+        enableScripts: true,
+        retainContextWhenHidden: true
+      });
+
+      paner.webview.postMessage({
+        command: 'image',
+        // TODO: use Uri.file(outPut).width({ scheme: 'vscode-resource'})
+        data: `vscode-resource:${outPut}`
       });
 
       paner.webview.html = new WebViewContent(outPut, rootPath).createWebViewContent();
