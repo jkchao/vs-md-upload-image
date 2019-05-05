@@ -27,8 +27,8 @@ export class Crop extends React.PureComponent<{}, State> {
     offsetX: 0,
     offsetY: 0,
 
-    cropWidth: 0,
-    cropHeight: 0,
+    cropWidth: 100,
+    cropHeight: 100,
     isResize: false,
     imageData: {
       imageWidth: 0,
@@ -38,20 +38,16 @@ export class Crop extends React.PureComponent<{}, State> {
     }
   };
 
-
-  constructor(props: {}) {
-    super(props);
-    this.state = {
-      isActive: false,
-      src: '',
-      style: {
-        top: '0',
-        left: '0',
-        width: '0',
-        height: '0'
-      }
-    };
-  }
+  state = {
+    isActive: false,
+    src: 'https://static.jkchao.cn/TypeScript.png',
+    style: {
+      top: '0',
+      left: '0',
+      width: '100px',
+      height: '100px'
+    }
+  };
 
   componentDidMount() {
     // vscode message
@@ -203,8 +199,6 @@ export class Crop extends React.PureComponent<{}, State> {
 
   onMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 
-    // if (e.target !== this.imageRef) return;
-
     e.preventDefault();
 
     const {
@@ -276,6 +270,39 @@ export class Crop extends React.PureComponent<{}, State> {
     });
   }
 
+  cancel = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    // e.stopPropagation();
+    this.corpData = {
+      startX: 0,
+      startY: 0,
+      offsetX: 0,
+      offsetY: 0,
+
+      cropWidth: 0,
+      cropHeight: 0,
+      isResize: false,
+      imageData: {
+        imageWidth: 0,
+        imageHeight: 0,
+        imageLeft: 0,
+        imageTop: 0
+      }
+    };
+
+    this.setState({
+      style: {
+        top: '0',
+        left: '0',
+        width: '0',
+        height: '0'
+      }
+    });
+  }
+
+  submit = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    // ..
+  }
+
   public render() {
 
     const { style, src } = this.state;
@@ -289,8 +316,9 @@ export class Crop extends React.PureComponent<{}, State> {
         onMouseDown={this.containerMouseDown}>
         <img
           src={src}
-          ref={n => this.imageRef = n}/>
-        {cropWidth && cropHeight && <div
+          ref={n => this.imageRef = n}
+          alt="crop"/>
+        {cropWidth && cropHeight && (<div
           className="selection"
           onMouseDown={this.onMouseDown}
           ref={n => this.sectionRef = n}
@@ -301,7 +329,11 @@ export class Crop extends React.PureComponent<{}, State> {
             <div className="handle se" data-ord="se"></div>
             <div className="handle sw" data-ord="sw"></div>
           </div>
-        </div>}
+          <div className="btn">
+            <a href="javascript:;" className="cancel" onClick={this.cancel}></a>
+            <a href="javascript:;" className="submit" onClick={this.submit}></a>
+          </div>
+        </div>) || null}
       </div>
     );
   }
