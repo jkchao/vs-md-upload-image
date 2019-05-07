@@ -10,41 +10,53 @@ export function selectFileToUpload(context: ExtensionContext) {
     return false;
   }
 
-  const currentFileUri = window.activeTextEditor.document.uri;
+  // const currentFileUri = window.activeTextEditor.document.uri;
 
   const rootPath = context.extensionPath;
 
-  window
-    .showOpenDialog({
-      filters: { Images: ['png', 'jpg', 'jpeg', 'gif'] }
-    })
-    .then(file => {
-      if (!file) return;
-      const { path: filePath } = file[0];
+  // window
+  //   .showOpenDialog({
+  //     filters: { Images: ['png', 'jpg', 'jpeg', 'gif'] }
+  //   })
+  //   .then(file => {
+  //     if (!file) return;
+  //     const { path: filePath } = file[0];
 
-      const imagePath = join(rootPath, `/images/`);
+  //     const imagePath = join(rootPath, `/images/`);
 
-      if (!existsSync(imagePath)) {
-        mkdirSync(imagePath);
-      }
+  //     if (!existsSync(imagePath)) {
+  //       mkdirSync(imagePath);
+  //     }
 
-      const outPut = `${rootPath}/${basename(filePath)}`;
+  //     const outPut = `${rootPath}/${basename(filePath)}`;
 
-      // 写文件到项目，如果不在此项目下，无权利访问
-      writeFileSync(`${outPut}`, readFileSync(filePath));
+  //     // 写文件到项目，如果不在此项目下，无权利访问
+  //     writeFileSync(`${outPut}`, readFileSync(filePath));
 
-      const paner = window.createWebviewPanel('image Corp', 'Image Corp', ViewColumn.One, {
-        enableScripts: true,
-        retainContextWhenHidden: true
-      });
+  //     const paner = window.createWebviewPanel('image Corp', 'Image Corp', ViewColumn.One, {
+  //       enableScripts: true,
+  //       retainContextWhenHidden: true
+  //     });
 
-      paner.webview.postMessage({
-        command: 'image',
-        // TODO: use Uri.file(outPut).width({ scheme: 'vscode-resource'})
-        data: `vscode-resource:${outPut}`
-      });
+  //     paner.webview.postMessage({
+  //       command: 'image',
+  //       // TODO: use Uri.file(outPut).width({ scheme: 'vscode-resource'})
+  //       data: `vscode-resource:${outPut}`
+  //     });
 
-      paner.webview.html = new WebViewContent(outPut, rootPath).createWebViewContent();
-      // return insertToMd(path);
-    });
+  //     paner.webview.html = new WebViewContent(outPut, rootPath).createWebViewContent();
+  //     // return insertToMd(path);
+  //   });
+  const paner = window.createWebviewPanel('image Corp', 'Image Corp', ViewColumn.One, {
+    enableScripts: true,
+    retainContextWhenHidden: true
+  });
+
+  paner.webview.postMessage({
+    command: 'selectImage',
+    // TODO: use Uri.file(outPut).width({ scheme: 'vscode-resource'})
+    data: true
+  });
+
+  paner.webview.html = new WebViewContent(outPut, rootPath).createWebViewContent();
 }

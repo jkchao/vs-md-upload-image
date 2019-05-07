@@ -20,6 +20,7 @@ export class Crop extends React.PureComponent<{}, State> {
   sectionRef: HTMLDivElement | null = null;
   containerRef: HTMLDivElement | null = null;
   imageRef: HTMLImageElement | null = null;
+  inputRef: HTMLInputElement | null = null;
 
   corpData = {
     startX: 0,
@@ -64,8 +65,6 @@ export class Crop extends React.PureComponent<{}, State> {
 
   onMessage = (e: MessageEvent) => {
     const message = e.data;
-
-    console.log(e);
 
     switch(message.command) {
       case 'image':
@@ -236,6 +235,10 @@ export class Crop extends React.PureComponent<{}, State> {
     });
   }
 
+  onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // ..
+  }
+
   containerMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 
     if (e.target !== this.imageRef) return;
@@ -270,7 +273,7 @@ export class Crop extends React.PureComponent<{}, State> {
     });
   }
 
-  cancel = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+  cancel = () => {
     // e.stopPropagation();
     this.corpData = {
       startX: 0,
@@ -300,7 +303,33 @@ export class Crop extends React.PureComponent<{}, State> {
   }
 
   submit = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    // ..
+    const canvas = document.createElement('canvas');
+    const image = this.imageRef!;
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
+
+    const { style: { width, height, top, left } } = this.state;
+
+    canvas.width = parseInt(width, 10);
+    canvas.height = parseInt(height, 10);
+
+    const ctx = canvas.getContext('2d');
+
+    ctx!.drawImage(
+      image,
+      parseInt(left, 10) * scaleX,
+      parseInt(top, 10) * scaleY,
+      parseInt(width, 10) * scaleX,
+      parseInt(height, 10) * scaleY,
+      0,
+      0,
+      parseInt(width, 10),
+      parseInt(height, 10)
+    );
+
+    console.log(canvas);
+
+    console.log(canvas.toDataURL());
   }
 
   public render() {
@@ -334,6 +363,11 @@ export class Crop extends React.PureComponent<{}, State> {
             <a href="javascript:;" className="submit" onClick={this.submit}></a>
           </div>
         </div>) || null}
+        <input
+          type="file"
+          onChange={this.onFileChange}
+          accept="image/*"
+          ref={n => this.inputRef = n}/>
       </div>
     );
   }
