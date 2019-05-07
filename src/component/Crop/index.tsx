@@ -12,6 +12,8 @@ interface State {
   };
 }
 
+declare const acquireVsCodeApi: () => any;
+
 function clamp(num: number, min: number, max: number) {
   return Math.min(Math.max(num, min), max);
 }
@@ -20,7 +22,8 @@ export class Crop extends React.PureComponent<{}, State> {
   sectionRef: HTMLDivElement | null = null;
   containerRef: HTMLDivElement | null = null;
   imageRef: HTMLImageElement | null = null;
-  inputRef: HTMLInputElement | null = null;
+
+  vscode = acquireVsCodeApi();
 
   corpData = {
     startX: 0,
@@ -41,7 +44,7 @@ export class Crop extends React.PureComponent<{}, State> {
 
   state = {
     isActive: false,
-    src: 'https://static.jkchao.cn/TypeScript.png',
+    src: '',
     style: {
       top: '0',
       left: '0',
@@ -235,10 +238,6 @@ export class Crop extends React.PureComponent<{}, State> {
     });
   }
 
-  onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // ..
-  }
-
   containerMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 
     if (e.target !== this.imageRef) return;
@@ -302,34 +301,22 @@ export class Crop extends React.PureComponent<{}, State> {
     });
   }
 
-  submit = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    const canvas = document.createElement('canvas');
+  submit = () => {
+
     const image = this.imageRef!;
-    const scaleX = image.naturalWidth / image.width;
-    const scaleY = image.naturalHeight / image.height;
+    const scaleX = image.width / image.naturalWidth ;
+    const scaleY = image.height / image.naturalHeight;
 
-    const { style: { width, height, top, left } } = this.state;
+    const { style } = this.state;
 
-    canvas.width = parseInt(width, 10);
-    canvas.height = parseInt(height, 10);
-
-    const ctx = canvas.getContext('2d');
-
-    ctx!.drawImage(
-      image,
-      parseInt(left, 10) * scaleX,
-      parseInt(top, 10) * scaleY,
-      parseInt(width, 10) * scaleX,
-      parseInt(height, 10) * scaleY,
-      0,
-      0,
-      parseInt(width, 10),
-      parseInt(height, 10)
-    );
-
-    console.log(canvas);
-
-    console.log(canvas.toDataURL());
+    this.vscode.postMessage({
+      command: 'complete',
+      data: {
+        ...style,
+        scaleX,
+        scaleY
+      }
+    });
   }
 
   public render() {
@@ -363,11 +350,6 @@ export class Crop extends React.PureComponent<{}, State> {
             <a href="javascript:;" className="submit" onClick={this.submit}></a>
           </div>
         </div>) || null}
-        <input
-          type="file"
-          onChange={this.onFileChange}
-          accept="image/*"
-          ref={n => this.inputRef = n}/>
       </div>
     );
   }
