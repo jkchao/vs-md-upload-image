@@ -1,17 +1,15 @@
 import { hasConfig, checkCurrentFile } from './utils';
 import { window, ViewColumn, Uri, ExtensionContext } from 'vscode';
-import { insertToMd } from './insert';
 import { WebViewContent } from './webviewContent';
 import { writeFileSync, readFileSync, mkdirSync, existsSync } from 'fs';
 import { join, basename } from 'path';
-import { crop } from './crop';
+import * as gm from 'gm';
+import { Upload } from './upload';
 
 export function selectFileToUpload(context: ExtensionContext) {
   if (!hasConfig() || !checkCurrentFile()) {
     return false;
   }
-
-  // const currentFileUri = window.activeTextEditor.document.uri;
 
   const rootPath = context.extensionPath;
 
@@ -46,18 +44,27 @@ export function selectFileToUpload(context: ExtensionContext) {
       });
 
       paner.webview.onDidReceiveMessage(message => {
-        console.log(message);
         switch (message.command) {
           case 'complete':
-            crop({
-              src: outPut,
-              ...message.data
-            });
+            const { width, height, left, top } = message.data;
+            console.log(message.data);
+            gm(outPut)
+              .crop(width, height, left, top)
+              .write(outPut, err => {
+                if (!err) {
+                  console.log('success');
+
+                  // 成功后关闭 paner
+                  paner.dispose();
+
+                  const upload = new Upload();
+                  upload.insertToMD(outPut);
+                }
+              });
             return;
         }
       });
 
       paner.webview.html = new WebViewContent(outPut, rootPath).createWebViewContent();
-      // return insertToMd(path);
     });
 }
