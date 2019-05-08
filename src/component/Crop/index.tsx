@@ -309,12 +309,19 @@ export class Crop extends React.PureComponent<{}, State> {
 
     const { style } = this.state;
 
+    const width = this.corpData.cropWidth / scaleX;
+    const height = this.corpData.cropHeight / scaleY;
+
+    const top = parseInt(style.top, 10) / scaleY;
+    const left = parseInt(style.left, 10) / scaleX;
+
     this.vscode.postMessage({
       command: 'complete',
       data: {
-        ...style,
-        scaleX,
-        scaleY
+        width,
+        height,
+        left,
+        top
       }
     });
   }

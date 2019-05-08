@@ -50,7 +50,7 @@ export function selectFileToUpload(context: ExtensionContext) {
         switch (message.command) {
           case 'complete':
             crop({
-              outPut,
+              src: outPut,
               ...message.data
             });
             return;
