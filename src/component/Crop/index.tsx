@@ -23,7 +23,7 @@ export class Crop extends React.PureComponent<{}, State> {
   containerRef: HTMLDivElement | null = null;
   imageRef: HTMLImageElement | null = null;
 
-  vscode = acquireVsCodeApi();
+  vscode: any;
 
   corpData = {
     startX: 0,
@@ -42,16 +42,30 @@ export class Crop extends React.PureComponent<{}, State> {
     }
   };
 
-  state = {
-    isActive: false,
-    src: '',
-    style: {
-      top: '0',
-      left: '0',
-      width: '100px',
-      height: '100px'
+  constructor(props: {}) {
+    super(props);
+
+    this.state = {
+      isActive: false,
+      src: 'https://static.jkchao.cn/TypeScript.png',
+      style: {
+        top: '0',
+        left: '0',
+        width: '100px',
+        height: '100px'
+      }
+    };
+
+    this.initVSCode();
+  }
+
+  initVSCode() {
+    try {
+      this.vscode = acquireVsCodeApi();
+    } catch (error) {
+      this.vscode = null;
     }
-  };
+  }
 
   componentDidMount() {
     // vscode message
@@ -112,31 +126,39 @@ export class Crop extends React.PureComponent<{}, State> {
       let height = 0;
       let left = 0;
       let top = 0;
+      const { pageX, pageY } = e;
 
       if (
-        e.pageX < startX ||
-        e.pageY < startY
+        pageX < startX ||
+        pageY < startY
         ) {
-          width = Math.abs(e.pageX - startX);
-          height = Math.abs(e.pageY - startY);
+          width = Math.abs(pageX - startX);
+          height = Math.abs(pageY - startY);
 
-          if (e.pageX < startX && e.pageY > startY) {
+          // 左下
+          if (pageX < startX && pageY > startY) {
             top = startY - imageTop;
-            left = e.pageX - imageLeft;
+            left = pageX - imageLeft;
 
-          } else if (e.pageX > startX && e.pageY < startY) {
+          } else if (pageX > startX && pageY < startY) {
 
-            top = e.pageY - imageTop;
+            // 右上
+            top = pageY - imageTop;
             left = startX - imageLeft;
 
           } else {
-            top = e.pageY - imageTop;
-            left = e.pageX - imageLeft;
+
+            // 左上
+            top = pageY - imageTop;
+            left = pageX - imageLeft;
           }
 
       } else {
-        width = e.pageX - startX;
-        height = e.pageY - startY;
+
+        // 右下
+
+        width = pageX - startX;
+        height = pageY - startY;
         top = this.corpData.offsetY;
         left = this.corpData.offsetX;
       }
@@ -217,6 +239,9 @@ export class Crop extends React.PureComponent<{}, State> {
       height: cropHeight
     } = this.sectionRef!.getBoundingClientRect();
 
+    // @ts-ignore
+    console.log(e.target!.dataset.ord || false);
+
     this.corpData = {
       startX: e.pageX,
       startY: e.pageY,
@@ -274,6 +299,39 @@ export class Crop extends React.PureComponent<{}, State> {
 
   cancel = () => {
     // e.stopPropagation();
+    this.reset();
+  }
+
+  submit = () => {
+
+    const image = this.imageRef!;
+    const scaleX = image.width / image.naturalWidth ;
+    const scaleY = image.height / image.naturalHeight;
+
+    const { style } = this.state;
+
+    const width = this.corpData.cropWidth / scaleX;
+    const height = this.corpData.cropHeight / scaleY;
+
+    const top = parseInt(style.top, 10) / scaleY;
+    const left = parseInt(style.left, 10) / scaleX;
+
+    if(this.vscode) {
+      this.vscode.postMessage({
+        command: 'complete',
+        data: {
+          width,
+          height,
+          left,
+          top
+        }
+      });
+    }
+
+    console.log({width, height, top, left});
+  }
+
+  reset = () => {
     this.corpData = {
       startX: 0,
       startY: 0,
@@ -297,31 +355,6 @@ export class Crop extends React.PureComponent<{}, State> {
         left: '0',
         width: '0',
         height: '0'
-      }
-    });
-  }
-
-  submit = () => {
-
-    const image = this.imageRef!;
-    const scaleX = image.width / image.naturalWidth ;
-    const scaleY = image.height / image.naturalHeight;
-
-    const { style } = this.state;
-
-    const width = this.corpData.cropWidth / scaleX;
-    const height = this.corpData.cropHeight / scaleY;
-
-    const top = parseInt(style.top, 10) / scaleY;
-    const left = parseInt(style.left, 10) / scaleX;
-
-    this.vscode.postMessage({
-      command: 'complete',
-      data: {
-        width,
-        height,
-        left,
-        top
       }
     });
   }
