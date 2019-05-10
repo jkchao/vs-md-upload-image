@@ -14,6 +14,23 @@ interface State {
 
 declare const acquireVsCodeApi: () => any;
 
+interface CropData {
+  startX: number;
+  startY: number;
+  offsetX: number;
+  offsetY: number;
+
+  cropWidth: number;
+  cropHeight: number;
+  isResize: boolean | string;
+  imageData: {
+    imageWidth: number;
+    imageHeight: number;
+    imageLeft: number;
+    imageTop: number;
+  };
+}
+
 function clamp(num: number, min: number, max: number) {
   return Math.min(Math.max(num, min), max);
 }
@@ -25,7 +42,7 @@ export class Crop extends React.PureComponent<{}, State> {
 
   vscode: any;
 
-  corpData = {
+  corpData: CropData = {
     startX: 0,
     startY: 0,
     offsetX: 0,
@@ -118,49 +135,36 @@ export class Crop extends React.PureComponent<{}, State> {
     // 调整大小
     if (this.corpData.isResize) {
       const {
-        startX, startY,
         imageData: { imageLeft, imageTop, imageWidth, imageHeight },
-        offsetX, offsetY
+        offsetX, offsetY,
+        isResize,
+        cropWidth,
+        cropHeight
       } = this.corpData;
-      let width = 0;
-      let height = 0;
-      let left = 0;
-      let top = 0;
+
+      let { startX, startY } = this.corpData;
+
+
       const { pageX, pageY } = e;
 
-      if (
-        pageX < startX ||
-        pageY < startY
-        ) {
-          width = Math.abs(pageX - startX);
-          height = Math.abs(pageY - startY);
+      if (isResize === 'se') {
+        startX = pageX - cropWidth;
+        startY = pageY - cropHeight;
+        console.log(startX);
+      }
 
-          // 左下
-          if (pageX < startX && pageY > startY) {
-            top = startY - imageTop;
-            left = pageX - imageLeft;
+      let width = Math.abs(pageX - startX);
+      let height = Math.abs(pageY - startY);
 
-          } else if (pageX > startX && pageY < startY) {
+      let top = startY - imageTop;
+      let left = startX - imageLeft;
 
-            // 右上
-            top = pageY - imageTop;
-            left = startX - imageLeft;
+      if(pageY < startY) {
+        top = pageY - imageTop;
+      }
 
-          } else {
-
-            // 左上
-            top = pageY - imageTop;
-            left = pageX - imageLeft;
-          }
-
-      } else {
-
-        // 右下
-
-        width = pageX - startX;
-        height = pageY - startY;
-        top = this.corpData.offsetY;
-        left = this.corpData.offsetX;
+      if (pageX < startX) {
+        left = pageX - imageLeft;
       }
 
 
@@ -168,21 +172,15 @@ export class Crop extends React.PureComponent<{}, State> {
       if (left < 0) {
         width = startX - imageLeft;
         left = 0;
+      } else if (e.pageX > startX && width + offsetX > imageWidth) {
+        width = imageWidth - offsetX - 1;
       }
 
       // 上边界
       if (top < 0) {
         height = startY - imageTop;
         top = 0;
-      }
-
-      // 右边界
-      if (e.pageX > startX && width + offsetX > imageWidth) {
-        width = imageWidth - offsetX - 1;
-      }
-
-      // 下边界
-      if (e.pageY > startY && height + offsetY > imageHeight) {
+      } else if (e.pageY > startY && height + offsetY > imageHeight) {
         height = imageHeight - offsetY - 1;
       }
 
@@ -255,7 +253,8 @@ export class Crop extends React.PureComponent<{}, State> {
       },
       cropWidth,
       cropHeight,
-      isResize: false
+      // @ts-ignore
+      isResize: e.target!.dataset.ord || false
     };
 
     this.setState({
