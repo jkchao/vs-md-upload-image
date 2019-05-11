@@ -22,7 +22,9 @@ interface CropData {
 
   cropWidth: number;
   cropHeight: number;
-  isResize: boolean | string;
+  cropLeft: number;
+  cropTop: number;
+  isResize: boolean | 'nw' | 'ne' | 'se' | 'sw';
   imageData: {
     imageWidth: number;
     imageHeight: number;
@@ -50,6 +52,9 @@ export class Crop extends React.PureComponent<{}, State> {
 
     cropWidth: 100,
     cropHeight: 100,
+    cropLeft: 0,
+    cropTop: 0,
+
     isResize: false,
     imageData: {
       imageWidth: 0,
@@ -147,14 +152,33 @@ export class Crop extends React.PureComponent<{}, State> {
 
       const { pageX, pageY } = e;
 
-      if (isResize === 'se') {
-        startX = pageX - cropWidth;
-        startY = pageY - cropHeight;
-        console.log(startX);
+      const diffx = pageX - startX;
+      const diffy = pageY - startY;
+
+      let width = Math.abs(cropWidth + diffx);
+      let height = Math.abs(cropHeight + diffy);
+
+      const xInversed = isResize === 'nw' || isResize === 'sw';
+      const yInversed = isResize === 'nw' || isResize === 'ne';
+
+      if (xInversed) {
+        width = Math.abs(cropWidth - diffx);
+        startX = startX + cropWidth;
       }
 
-      let width = Math.abs(pageX - startX);
-      let height = Math.abs(pageY - startY);
+      if (yInversed) {
+        height = Math.abs(cropHeight - diffy);
+        startY = startY + cropHeight;
+      }
+
+      if (isResize === 'se' || isResize === 'sw') {
+        startY = startY - cropHeight;
+      }
+
+      if (isResize === 'ne' || isResize === 'se') {
+        startX = startX - cropWidth;
+
+      }
 
       let top = startY - imageTop;
       let left = startX - imageLeft;
@@ -167,20 +191,17 @@ export class Crop extends React.PureComponent<{}, State> {
         left = pageX - imageLeft;
       }
 
-
-      // 左边界
       if (left < 0) {
         width = startX - imageLeft;
         left = 0;
-      } else if (e.pageX > startX && width + offsetX > imageWidth) {
+      } else if (offsetX > 0 && width + offsetX > imageWidth) {
         width = imageWidth - offsetX - 1;
       }
 
-      // 上边界
       if (top < 0) {
         height = startY - imageTop;
         top = 0;
-      } else if (e.pageY > startY && height + offsetY > imageHeight) {
+      } else if (offsetY > 0 && height + offsetY > imageHeight) {
         height = imageHeight - offsetY - 1;
       }
 
@@ -193,11 +214,6 @@ export class Crop extends React.PureComponent<{}, State> {
         }
       });
 
-      this.corpData = {
-        ...this.corpData,
-        cropWidth: width,
-        cropHeight: height
-      };
     } else {
       // 只有拖拽移动
       const { top, left } = this.getPos(e);
@@ -237,8 +253,6 @@ export class Crop extends React.PureComponent<{}, State> {
       height: cropHeight
     } = this.sectionRef!.getBoundingClientRect();
 
-    // @ts-ignore
-    console.log(e.target!.dataset.ord || false);
 
     this.corpData = {
       startX: e.pageX,
@@ -253,6 +267,8 @@ export class Crop extends React.PureComponent<{}, State> {
       },
       cropWidth,
       cropHeight,
+      cropLeft: left,
+      cropTop: top,
       // @ts-ignore
       isResize: e.target!.dataset.ord || false
     };
@@ -288,6 +304,8 @@ export class Crop extends React.PureComponent<{}, State> {
       },
       cropWidth: 0,
       cropHeight: 0,
+      cropLeft: 0,
+      cropTop: 0,
       isResize: true
     };
 
@@ -339,6 +357,9 @@ export class Crop extends React.PureComponent<{}, State> {
 
       cropWidth: 0,
       cropHeight: 0,
+      cropLeft: 0,
+      cropTop: 0,
+
       isResize: false,
       imageData: {
         imageWidth: 0,
@@ -362,7 +383,10 @@ export class Crop extends React.PureComponent<{}, State> {
 
     const { style, src } = this.state;
 
-    const { cropWidth, cropHeight } = this.corpData;
+    // const { cropWidth, cropHeight } = this.corpData;
+
+    const width = parseInt(style.width, 10);
+    const height = parseInt(style.height, 10);
 
     return (
       <div
@@ -373,7 +397,7 @@ export class Crop extends React.PureComponent<{}, State> {
           src={src}
           ref={n => this.imageRef = n}
           alt="crop"/>
-        {cropWidth && cropHeight && (<div
+        {width && height && (<div
           className="selection"
           onMouseDown={this.onMouseDown}
           ref={n => this.sectionRef = n}
