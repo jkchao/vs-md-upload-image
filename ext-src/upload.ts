@@ -31,6 +31,8 @@ export class Upload {
   }
 
   private toQN(filePath: string) {
+    // TODO: ProgressLocation
+
     const domain = this.config.get<string>(QINIU_DOMAIN);
     const prefix = this.config.get<string>(QINIU_PREFIX);
 
@@ -50,7 +52,7 @@ export class Upload {
           showMessage(MessageType.INFO, 'upload success');
 
           resolve({
-            fileUrl: domain!.endsWith('/') ? `${domain}${fileName}` : `${domain}/${fileName}`,
+            fileUrl: domain!.endsWith('/') ? `${domain}${key}` : `${domain}/${key}`,
             fileName
           });
         } else {
@@ -67,7 +69,7 @@ export class Upload {
     const editor = window.activeTextEditor;
     const img = `![${file.fileName}](${file.fileUrl})`;
 
-    editor!.edit(text => {
+    return editor!.edit(text => {
       text.insert(editor!.selection.active, img);
     });
   }

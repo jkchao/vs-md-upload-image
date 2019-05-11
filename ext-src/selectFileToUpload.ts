@@ -1,7 +1,7 @@
 import { hasConfig, checkCurrentFile } from './utils';
 import { window, ViewColumn, Uri, ExtensionContext } from 'vscode';
 import { WebViewContent } from './webviewContent';
-import { writeFileSync, readFileSync, mkdirSync, existsSync } from 'fs';
+import { writeFileSync, readFileSync, mkdirSync, existsSync, unlinkSync } from 'fs';
 import { join, basename } from 'path';
 import * as gm from 'gm';
 import { Upload } from './upload';
@@ -27,7 +27,7 @@ export function selectFileToUpload(context: ExtensionContext) {
         mkdirSync(imagePath);
       }
 
-      const outPut = `${rootPath}/${basename(filePath)}`;
+      const outPut = `${imagePath}/${basename(filePath)}`;
 
       // 写文件到项目，如果不在此项目下，无权利访问
       writeFileSync(`${outPut}`, readFileSync(filePath));
@@ -47,18 +47,20 @@ export function selectFileToUpload(context: ExtensionContext) {
         switch (message.command) {
           case 'complete':
             const { width, height, left, top } = message.data;
-            console.log(message.data);
             gm(outPut)
               .crop(width, height, left, top)
-              .write(outPut, err => {
+              .write(outPut, async err => {
                 if (!err) {
-                  console.log('success');
-
                   // 成功后关闭 paner
+                  // TODO: 能否在上传成功之后在关闭 paner？试过，行不通，找其他办法。
                   paner.dispose();
 
                   const upload = new Upload();
-                  upload.insertToMD(outPut);
+                  const result = await upload.insertToMD(outPut);
+                  if (result) {
+                    await unlinkSync(outPut);
+                    console.info('delete:' + outPut + '**** success');
+                  }
                 }
               });
             return;
