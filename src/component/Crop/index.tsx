@@ -17,8 +17,6 @@ declare const acquireVsCodeApi: () => any;
 interface CropData {
   startX: number;
   startY: number;
-  offsetX: number;
-  offsetY: number;
 
   cropWidth: number;
   cropHeight: number;
@@ -47,8 +45,6 @@ export class Crop extends React.PureComponent<{}, State> {
   corpData: CropData = {
     startX: 0,
     startY: 0,
-    offsetX: 0,
-    offsetY: 0,
 
     cropWidth: 100,
     cropHeight: 100,
@@ -69,7 +65,7 @@ export class Crop extends React.PureComponent<{}, State> {
 
     this.state = {
       isActive: false,
-      src: 'https://static.jkchao.cn/TypeScript.png',
+      src: '',
       style: {
         top: '0',
         left: '0',
@@ -117,17 +113,18 @@ export class Crop extends React.PureComponent<{}, State> {
   getPos = (e: MouseEvent) => {
     const { pageX, pageY } = e;
     const {
-      offsetX, startX, offsetY, startY,
-      imageData: { imageWidth, imageHeight },
-      cropWidth, cropHeight
+      startX, startY,
+      imageData: { imageWidth, imageHeight, imageLeft, imageTop },
+      cropWidth, cropHeight,
+      cropLeft, cropTop
      } = this.corpData;
 
     const diffY = pageY - startY;
     const diffX = pageX - startX;
 
     return {
-      top: clamp(offsetY + diffY, 0, imageHeight - cropHeight),
-      left: clamp(offsetX + diffX, 0, imageWidth - cropWidth)
+      top: clamp(cropTop - imageTop + diffY, 0, imageHeight - cropHeight),
+      left: clamp(cropLeft - imageLeft + diffX, 0, imageWidth - cropWidth)
     };
   }
 
@@ -141,33 +138,25 @@ export class Crop extends React.PureComponent<{}, State> {
     if (this.corpData.isResize) {
       const {
         imageData: { imageLeft, imageTop, imageWidth, imageHeight },
-        offsetX, offsetY,
         isResize,
         cropWidth,
         cropHeight
       } = this.corpData;
-
-      let { startX, startY } = this.corpData;
-
-
       const { pageX, pageY } = e;
-
-      const diffx = pageX - startX;
-      const diffy = pageY - startY;
-
-      let width = Math.abs(cropWidth + diffx);
-      let height = Math.abs(cropHeight + diffy);
-
       const xInversed = isResize === 'nw' || isResize === 'sw';
       const yInversed = isResize === 'nw' || isResize === 'ne';
 
+      let { startX, startY } = this.corpData;
+      let diffx = pageX - startX;
+      let diffy = pageY - startY;
+
       if (xInversed) {
-        width = Math.abs(cropWidth - diffx);
+        diffx -= cropWidth * 2;
         startX = startX + cropWidth;
       }
 
       if (yInversed) {
-        height = Math.abs(cropHeight - diffy);
+        diffy -= cropHeight * 2;
         startY = startY + cropHeight;
       }
 
@@ -179,6 +168,12 @@ export class Crop extends React.PureComponent<{}, State> {
         startX = startX - cropWidth;
 
       }
+
+      const offsetX = startX - imageLeft;
+      const offsetY = startY - imageTop;
+
+      let width = Math.abs(cropWidth + diffx);
+      let height = Math.abs(cropHeight + diffy);
 
       let top = startY - imageTop;
       let left = startX - imageLeft;
@@ -194,14 +189,14 @@ export class Crop extends React.PureComponent<{}, State> {
       if (left < 0) {
         width = startX - imageLeft;
         left = 0;
-      } else if (offsetX > 0 && width + offsetX > imageWidth) {
+      } else if (e.pageX > startX && width + offsetX > imageWidth) {
         width = imageWidth - offsetX - 1;
       }
 
       if (top < 0) {
         height = startY - imageTop;
         top = 0;
-      } else if (offsetY > 0 && height + offsetY > imageHeight) {
+      } else if (e.pageY > startY && height + offsetY > imageHeight) {
         height = imageHeight - offsetY - 1;
       }
 
@@ -257,8 +252,6 @@ export class Crop extends React.PureComponent<{}, State> {
     this.corpData = {
       startX: e.pageX,
       startY: e.pageY,
-      offsetX: left - imageLeft,
-      offsetY: top - imageTop,
       imageData: {
         imageLeft,
         imageTop,
@@ -294,8 +287,6 @@ export class Crop extends React.PureComponent<{}, State> {
     this.corpData = {
       startX: e.pageX,
       startY: e.pageY,
-      offsetX: e.pageX - imageLeft,
-      offsetY: e.pageY - imageTop,
       imageData: {
         imageLeft,
         imageTop,
@@ -344,16 +335,12 @@ export class Crop extends React.PureComponent<{}, State> {
         }
       });
     }
-
-    console.log({width, height, top, left});
   }
 
   reset = () => {
     this.corpData = {
       startX: 0,
       startY: 0,
-      offsetX: 0,
-      offsetY: 0,
 
       cropWidth: 0,
       cropHeight: 0,
