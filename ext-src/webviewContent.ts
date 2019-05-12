@@ -3,7 +3,7 @@ import { join } from 'path';
 
 export class WebViewContent {
   private buildPath: string;
-  constructor(private imagePath: string, rootPath: string) {
+  constructor(rootPath: string) {
     this.buildPath = join(rootPath, 'build');
   }
 

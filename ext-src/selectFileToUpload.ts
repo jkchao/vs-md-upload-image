@@ -5,6 +5,7 @@ import { writeFileSync, readFileSync, mkdirSync, existsSync, unlinkSync } from '
 import { join, basename } from 'path';
 import * as gm from 'gm';
 import { Upload } from './upload';
+import { showMessage, MessageType } from './utils/message';
 
 export function selectFileToUpload(context: ExtensionContext) {
   if (!hasConfig() || !checkCurrentFile()) {
@@ -12,6 +13,8 @@ export function selectFileToUpload(context: ExtensionContext) {
   }
 
   const rootPath = context.extensionPath;
+
+  const activeTextEditor = window.activeTextEditor;
 
   window
     .showOpenDialog({
@@ -43,6 +46,20 @@ export function selectFileToUpload(context: ExtensionContext) {
         data: `vscode-resource:${outPut}`
       });
 
+      paner.onDidChangeViewState(
+        e => {
+          const paner = e.webviewPanel;
+          switch (paner.visible) {
+            case false:
+              showMessage(MessageType.INFO, '检测到上传文件 tab 不可见，请重新上传');
+              paner.dispose();
+              break;
+          }
+        },
+        null,
+        context.subscriptions
+      );
+
       paner.webview.onDidReceiveMessage(message => {
         switch (message.command) {
           case 'complete':
@@ -67,6 +84,6 @@ export function selectFileToUpload(context: ExtensionContext) {
         }
       });
 
-      paner.webview.html = new WebViewContent(outPut, rootPath).createWebViewContent();
+      paner.webview.html = new WebViewContent(rootPath).createWebViewContent();
     });
 }
