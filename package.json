@@ -2,17 +2,19 @@
   "name": "vs-md-upload-image",
   "displayName": "vs-md-upload-image",
   "description": "upload image in vscode when write .md",
-  "version": "0.0.1",
+  "publisher": "jkchao",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.33.0"
   },
   "categories": [
-    "Other"
+    "Extension Packs"
   ],
   "activationEvents": [
     "onCommand:extension.uploadQN"
   ],
   "main": "./out/extension.js",
+  "icon": "icon.png",
   "contributes": {
     "markdown.markdownItPlugins": true,
     "commands": [
@@ -100,5 +102,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "homepage": "https://github.com/jkchao/vs-md-upload-image",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jkchao/vs-md-upload-image.git"
+  },
+  "__metadata": {
+    "id": "1834cd2a-404a-4d1f-83cd-60e22bcf8e67",
+    "publisherId": "e69be5d0-ec06-4ec0-8532-cf5613287895",
+    "publisherDisplayName": "jkchao"
   }
 }

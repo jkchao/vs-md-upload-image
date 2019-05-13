@@ -23,8 +23,8 @@
 
 ## Screenshot
 
-![image](./screenshot/upload.gif)
+![image](https://raw.githubusercontent.com/jkchao/vs-md-upload-image/master/screenshot/upload.gif)
 
 ## Notice
 
-此插件是新开一个 paner 来进行图片的操作，因此受限于 VSCode 暴露的 API 限制（[如不能通过 API 来切换到指定的 paner](https://github.com/Microsoft/vscode/issues/15178)），当你在操作图片时切换到另一个 paner，此 paner 将会关闭（）。
+此插件是新开一个 paner 来进行图片的操作，因此受限于 VSCode 暴露的 API 限制（[如不能通过 API 来切换到指定的 paner](https://github.com/Microsoft/vscode/issues/15178)），当你在操作图片时切换到另一个 paner，此 paner 将会关闭。
