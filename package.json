@@ -3,7 +3,7 @@
   "displayName": "vs-md-upload-image",
   "description": "upload image in vscode when write .md",
   "publisher": "jkchao",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.33.0"
   },
