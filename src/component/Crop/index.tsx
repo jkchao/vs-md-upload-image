@@ -171,9 +171,6 @@ export class Crop extends React.PureComponent<{}, State> {
         startX = startX - cropWidth;
       }
 
-
-      const [ offsetX, offsetY ] = [ startX - imageLeft, startY - imageTop ];
-
       let [ left, top ] = [ startX - imageLeft, startY - imageTop ];
 
       let width = clamp(Math.abs(cropWidth + diffx), 0, imageWidth);
@@ -193,17 +190,17 @@ export class Crop extends React.PureComponent<{}, State> {
 
       // 边界调整
       if (left < 0) {
-        width = offsetX;
+        width = startX - imageLeft;
         left = 0;
-      } else if (!xCloseOver && width + offsetX > imageWidth) {
-        width = imageWidth - offsetX - 1;
+      } else if (width + left > imageWidth) {
+        width = imageWidth - left;
       }
 
       if (top < 0) {
-        height = offsetY;
+        height = startY - imageTop;
         top = 0;
-      } else if (!yCloseOver && height + offsetY > imageHeight) {
-        height = imageHeight - offsetY - 1;
+      } else if (height + top > imageHeight) {
+        height = imageHeight - top;
       }
 
       this.setState({
