@@ -14,7 +14,7 @@
     "onCommand:extension.uploadQN"
   ],
   "main": "./out/extension.js",
-  "icon": "icon.png",
+  "icon": "./resource/icon.png",
   "contributes": {
     "markdown.markdownItPlugins": true,
     "commands": [
