@@ -21,6 +21,18 @@
 | qiniu.prefix | string | ""      | false    | 路径前缀可以用来分类文件，例如： image/jpg/your-file-name.jpg |
 | qiniu.domain | string | ""      | true     | 外链域名                                                      |
 
+## How to use
+
+- 由于底层默认使用 [GraphicsMagick](http://www.graphicsmagick.org/)，因此你需要先安装 GraphicsMagick
+
+  ```shell
+  brew install GraphicsMagick
+  ```
+
+- 安装插件，配置参数
+
+- 打开一个 **.md** 文件，打开设置面板 (mac: control + command + p, windows: ctr + shift + p)，选择 Upload image: select file to upload，接下来就可以进行操作了。
+
 ## Screenshot
 
 ![image](https://raw.githubusercontent.com/jkchao/vs-md-upload-image/master/screenshot/upload.gif)
