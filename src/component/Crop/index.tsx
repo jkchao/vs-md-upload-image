@@ -22,6 +22,7 @@ interface CropData {
   cropHeight: number;
   cropLeft: number;
   cropTop: number;
+
   isResize: boolean | 'nw' | 'ne' | 'se' | 'sw';
   imageData: {
     imageWidth: number;
@@ -142,20 +143,22 @@ export class Crop extends React.PureComponent<{}, State> {
         cropWidth,
         cropHeight
       } = this.corpData;
+
       const { pageX, pageY } = e;
       const xInversed = isResize === 'nw' || isResize === 'sw';
       const yInversed = isResize === 'nw' || isResize === 'ne';
 
       let { startX, startY } = this.corpData;
-      let diffx = pageX - startX;
-      let diffy = pageY - startY;
+      let [ diffx, diffy ] = [ pageX - startX, pageY - startY ];
 
       if (xInversed) {
+        // 拖拽左上，与右下
         diffx -= cropWidth * 2;
         startX = startX + cropWidth;
       }
 
       if (yInversed) {
+        // 左上，与右上
         diffy -= cropHeight * 2;
         startY = startY + cropHeight;
       }
@@ -166,37 +169,40 @@ export class Crop extends React.PureComponent<{}, State> {
 
       if (isResize === 'ne' || isResize === 'se') {
         startX = startX - cropWidth;
-
       }
 
-      const offsetX = startX - imageLeft;
-      const offsetY = startY - imageTop;
 
-      let width = Math.abs(cropWidth + diffx);
-      let height = Math.abs(cropHeight + diffy);
+      const [ offsetX, offsetY ] = [ startX - imageLeft, startY - imageTop ];
 
-      let top = startY - imageTop;
-      let left = startX - imageLeft;
+      let [ left, top ] = [ startX - imageLeft, startY - imageTop ];
 
-      if(pageY < startY) {
+      let width = clamp(Math.abs(cropWidth + diffx), 0, imageWidth);
+      let height = clamp(Math.abs(cropHeight + diffy), 0, imageHeight);
+
+      const xCloseOver = pageX < startX;
+      const yCloseOver = pageY < startY;
+
+
+      if(yCloseOver) {
         top = pageY - imageTop;
       }
 
-      if (pageX < startX) {
+      if (xCloseOver) {
         left = pageX - imageLeft;
       }
 
+      // 边界调整
       if (left < 0) {
-        width = startX - imageLeft;
+        width = offsetX;
         left = 0;
-      } else if (e.pageX > startX && width + offsetX > imageWidth) {
+      } else if (!xCloseOver && width + offsetX > imageWidth) {
         width = imageWidth - offsetX - 1;
       }
 
       if (top < 0) {
-        height = startY - imageTop;
+        height = offsetY;
         top = 0;
-      } else if (e.pageY > startY && height + offsetY > imageHeight) {
+      } else if (!yCloseOver && height + offsetY > imageHeight) {
         height = imageHeight - offsetY - 1;
       }
 
@@ -263,7 +269,7 @@ export class Crop extends React.PureComponent<{}, State> {
       cropLeft: left,
       cropTop: top,
       // @ts-ignore
-      isResize: e.target!.dataset.ord || false
+      isResize: e.target.dataset.ord || false
     };
 
     this.setState({
@@ -312,15 +318,13 @@ export class Crop extends React.PureComponent<{}, State> {
 
   submit = () => {
 
+    const { style } = this.state;
+
     const image = this.imageRef!;
     const scaleX = image.width / image.naturalWidth ;
     const scaleY = image.height / image.naturalHeight;
-
-    const { style } = this.state;
-
-    const width = this.corpData.cropWidth / scaleX;
-    const height = this.corpData.cropHeight / scaleY;
-
+    const width = parseInt(style.width, 10) / scaleX;
+    const height = parseInt(style.height, 10) / scaleY;
     const top = parseInt(style.top, 10) / scaleY;
     const left = parseInt(style.left, 10) / scaleX;
 
@@ -369,8 +373,6 @@ export class Crop extends React.PureComponent<{}, State> {
   public render() {
 
     const { style, src } = this.state;
-
-    // const { cropWidth, cropHeight } = this.corpData;
 
     const width = parseInt(style.width, 10);
     const height = parseInt(style.height, 10);
