@@ -3,7 +3,7 @@
   "displayName": "vs-md-upload-image",
   "description": "upload image in vscode when write .md",
   "publisher": "jkchao",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "engines": {
     "vscode": "^1.33.0"
   },
@@ -46,6 +46,11 @@
         "qiniu.domain": {
           "type": "string",
           "description": "上传成功后的图片 url 的 domain"
+        },
+        "qiniu.needCrop": {
+          "type": "boolean",
+          "default": true,
+          "description": "是否需要裁剪"
         }
       }
     }
@@ -103,7 +108,6 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "https://github.com/jkchao/vs-md-upload-image",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jkchao/vs-md-upload-image.git"
