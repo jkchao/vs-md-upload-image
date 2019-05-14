@@ -11,7 +11,7 @@ export class WebView {
   constructor(private outPut: string, private context: ExtensionContext, private rootPath: string) {}
 
   private postMessage() {
-    this.paner.webview.postMessage({
+    this.paner!.webview.postMessage({
       command: 'image',
       // TODO: use Uri.file(outPut).width({ scheme: 'vscode-resource'})
       data: `vscode-resource:${this.outPut}`
@@ -60,7 +60,7 @@ export class WebView {
               if (!err) {
                 // 成功后关闭 paner
                 // TODO: 能否在上传成功之后在关闭 paner？试过，行不通，找其他办法。
-                this.paner.dispose();
+                this.paner!.dispose();
 
                 return this.upload();
               }
