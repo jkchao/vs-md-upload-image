@@ -12,15 +12,3 @@ export function hasConfig() {
 
   return true;
 }
-
-export function checkCurrentFile() {
-  // current file
-  const currentFile = window.activeTextEditor;
-
-  if (!currentFile || currentFile.document.languageId !== 'markdown') {
-    showMessage(MessageType.ERROR, 'place open a .md file if you wath upload a file');
-    return false;
-  }
-
-  return true;
-}

@@ -49,10 +49,10 @@ export class Upload {
           reject(err);
         }
         if (info.statusCode === 200) {
-          showMessage(MessageType.INFO, 'upload success');
+          const fileUrl = domain!.endsWith('/') ? `${domain}${key}` : `${domain}/${key}`;
 
           resolve({
-            fileUrl: domain!.endsWith('/') ? `${domain}${key}` : `${domain}/${key}`,
+            fileUrl,
             fileName
           });
         } else {
@@ -64,13 +64,20 @@ export class Upload {
   }
 
   public async insertToMD(path: string) {
-    const file = await this.toQN(path);
+    const { fileUrl, fileName } = await this.toQN(path);
 
     const editor = window.activeTextEditor;
-    const img = `![${file.fileName}](${file.fileUrl})`;
 
-    return editor!.edit(text => {
-      text.insert(editor!.selection.active, img);
-    });
+    if (!editor || editor.document.languageId !== 'markdown') {
+      showMessage(MessageType.INFO, '上传成功，已将 url 复制至剪切板: ' + fileUrl);
+      // TODO: 复制至剪切板
+      return;
+    } else {
+      const img = `![${fileName}](${fileUrl})`;
+
+      return editor!.edit(text => {
+        text.insert(editor!.selection.active, img);
+      });
+    }
   }
 }

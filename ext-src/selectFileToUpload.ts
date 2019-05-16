@@ -1,4 +1,4 @@
-import { hasConfig, checkCurrentFile } from './utils';
+import { hasConfig } from './utils';
 import { window, ExtensionContext, workspace } from 'vscode';
 import { writeFileSync, readFileSync, mkdirSync, existsSync, unlinkSync } from 'fs';
 import { join, basename } from 'path';
@@ -7,7 +7,7 @@ import { WebView } from './webView';
 import { Upload } from './upload';
 
 export function selectFileToUpload(context: ExtensionContext) {
-  if (!hasConfig() || !checkCurrentFile()) {
+  if (!hasConfig()) {
     return false;
   }
 
