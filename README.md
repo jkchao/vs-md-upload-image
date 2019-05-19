@@ -34,9 +34,17 @@
 
 - 打开一个 **.md** 文件，打开设置面板 (mac: control + command + p, windows: ctr + shift + p)，选择 Upload image: select file to upload，接下来就可以进行操作了。
 
+- 或者点击 statusBar（右下角） 下的文字 'Upload' 即可上传
+
 ## Screenshot
 
+- 使用设置面板形式
+
 ![image](https://raw.githubusercontent.com/jkchao/vs-md-upload-image/master/screenshot/upload.gif)
+
+- 使用 StatusBar：
+
+![image](https://raw.githubusercontent.com/jkchao/vs-md-upload-image/master/screenshot/statusBar.gif)
 
 ## Notice
 
