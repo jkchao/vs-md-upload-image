@@ -110,7 +110,6 @@
       "last 1 safari version"
     ]
   },
-  "enableProposedApi": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jkchao/vs-md-upload-image.git"
