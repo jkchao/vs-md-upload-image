@@ -3,7 +3,7 @@
   "displayName": "vs-md-upload-image",
   "description": "upload image in vscode when write .md",
   "publisher": "jkchao",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "engines": {
     "vscode": "^1.33.0"
   },
@@ -74,6 +74,7 @@
     ]
   },
   "devDependencies": {
+    "@types/copy-paste": "^1.1.30",
     "@types/gm": "^1.18.2",
     "@types/mocha": "^2.2.42",
     "@types/node": "^10.12.21",
@@ -88,6 +89,7 @@
     "vscode": "^1.1.28"
   },
   "dependencies": {
+    "copy-paste": "^1.3.0",
     "gm": "^1.23.1",
     "markdown-it-emoji": "^1.4.0",
     "qiniu": "^7.2.1",
@@ -108,6 +110,7 @@
       "last 1 safari version"
     ]
   },
+  "enableProposedApi": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jkchao/vs-md-upload-image.git"

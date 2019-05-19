@@ -1,8 +1,10 @@
 import * as qiniu from 'qiniu';
-import { workspace, window, ProgressLocation, StatusBarAlignment, WorkspaceConfiguration } from 'vscode';
+import { workspace, window, Clipboard, ProgressLocation, StatusBarAlignment, WorkspaceConfiguration } from 'vscode';
 import { QINIU_PREFIX, QINIU_DOMAIN, QINIU_AK, QINIU_SK, QINIU_BUCKET } from './constants';
 import * as path from 'path';
 import { showMessage, MessageType } from './utils/message';
+
+import * as ncp from 'copy-paste';
 
 interface Response {
   fileUrl: string;
@@ -66,15 +68,15 @@ export class Upload {
   public async insertToMD(path: string) {
     const { fileUrl, fileName } = await this.toQN(path);
 
+    const img = `![${fileName}](${fileUrl})`;
+
+    ncp.copy(fileUrl, () => {
+      showMessage(MessageType.INFO, '上传成功，已将 url 复制至剪切板: ' + fileUrl);
+    });
+
     const editor = window.activeTextEditor;
 
-    if (!editor || editor.document.languageId !== 'markdown') {
-      showMessage(MessageType.INFO, '上传成功，已将 url 复制至剪切板: ' + fileUrl);
-      // TODO: 复制至剪切板
-      return;
-    } else {
-      const img = `![${fileName}](${fileUrl})`;
-
+    if (editor && editor.document.languageId === 'markdown') {
       return editor!.edit(text => {
         text.insert(editor!.selection.active, img);
       });
