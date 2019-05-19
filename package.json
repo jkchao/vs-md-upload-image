@@ -75,6 +75,7 @@
   },
   "devDependencies": {
     "@types/copy-paste": "^1.1.30",
+    "@types/dateformat": "^3.0.0",
     "@types/gm": "^1.18.2",
     "@types/mocha": "^2.2.42",
     "@types/node": "^10.12.21",
@@ -90,6 +91,7 @@
   },
   "dependencies": {
     "copy-paste": "^1.3.0",
+    "dateformat": "^3.0.3",
     "gm": "^1.23.1",
     "markdown-it-emoji": "^1.4.0",
     "qiniu": "^7.2.1",

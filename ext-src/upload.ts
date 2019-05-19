@@ -3,6 +3,7 @@ import { workspace, window, Clipboard, ProgressLocation, StatusBarAlignment, Wor
 import { QINIU_PREFIX, QINIU_DOMAIN, QINIU_AK, QINIU_SK, QINIU_BUCKET } from './constants';
 import * as path from 'path';
 import { showMessage, MessageType } from './utils/message';
+import * as dateformat from 'dateformat';
 
 import * as ncp from 'copy-paste';
 
@@ -35,13 +36,15 @@ export class Upload {
   private toQN(filePath: string) {
     // TODO: ProgressLocation
 
+    const now = new Date();
+
     const domain = this.config.get<string>(QINIU_DOMAIN);
-    const prefix = this.config.get<string>(QINIU_PREFIX);
+    const prefix = this.config.get<string>(QINIU_PREFIX) || dateformat(now, 'isoDate');
 
     const config = new qiniu.conf.Config();
     const formUploader = new qiniu.form_up.FormUploader(config);
     const fileName = path.basename(filePath);
-    const key = !!prefix ? `${prefix}/${fileName}` : `${fileName}`;
+    const key = `${prefix}/${fileName}`;
     const extra = new qiniu.form_up.PutExtra();
 
     return new Promise<Response>((resolve, reject) => {
