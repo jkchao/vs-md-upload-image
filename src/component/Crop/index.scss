@@ -3,9 +3,25 @@
   margin: 3% 0;
   cursor: crosshair;
 
-  > img {
-    display: block;
-    max-width: 100%;
+  > .img-box {
+    > img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .rotate {
+      display: flex;
+      justify-content: flex-end;
+
+      a {
+        margin-left: 16px;
+        background: rgba(255, 255, 255, 0.7);
+
+        img {
+          width: 32px;
+        }
+      }
+    }
   }
 
 

@@ -1,9 +1,12 @@
 import * as React from 'react';
+import rotateLeft from '../../assets/images/rotate_left.png';
+import rotateRight from '../../assets/images/rotate_right.png';
 import './index.scss';
 
 interface State {
   isActive: boolean;
   src: string;
+  rotate: string;
   style: {
     top: string;
     left: string;
@@ -66,7 +69,8 @@ export class Crop extends React.PureComponent<{}, State> {
 
     this.state = {
       isActive: false,
-      src: '',
+      src: 'https://static.jkchao.cn/TypeScript.png',
+      rotate: '0deg',
       style: {
         top: '0',
         left: '0',
@@ -367,9 +371,23 @@ export class Crop extends React.PureComponent<{}, State> {
     });
   }
 
+  rotate = (direction: 'left' | 'right') => {
+    this.reset();
+    const rotate = parseInt(this.state.rotate.split('deg')[0], 10);
+    if (direction === 'left') {
+      this.setState({
+        rotate: `${rotate + 45}deg`
+      });
+    } else {
+      this.setState({
+        rotate: `${rotate - 45}deg`
+      });
+    }
+  }
+
   public render() {
 
-    const { style, src } = this.state;
+    const { style, src, isActive, rotate } = this.state;
 
     const width = parseInt(style.width, 10);
     const height = parseInt(style.height, 10);
@@ -379,10 +397,27 @@ export class Crop extends React.PureComponent<{}, State> {
         className="container"
         ref={n => this.containerRef = n}
         onMouseDown={this.containerMouseDown}>
-        <img
-          src={src}
-          ref={n => this.imageRef = n}
-          alt="crop"/>
+        <div className="img-box">
+          <img
+            src={src}
+            ref={n => this.imageRef = n}
+            style={{
+              transform: `rotate(${rotate})`
+            }}
+            alt="crop"/>
+            {
+              !width && !height && (
+                <span className="rotate">
+                  <a href="javascript:;" onClick={() => this.rotate('left')}>
+                    <img src={rotateLeft} alt="rotate_left"/>
+                  </a>
+                  <a href="javascript:;" onClick={() => this.rotate('right')}>
+                    <img src={rotateRight} alt="rotate_left"/>
+                  </a>
+                </span>
+              )
+            }
+        </div>
         {width && height && (<div
           className="selection"
           onMouseDown={this.onMouseDown}
